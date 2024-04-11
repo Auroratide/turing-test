@@ -7,6 +7,7 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
+import { Ai } from "@cloudflare/ai"
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -23,10 +24,18 @@ export interface Env {
 	//
 	// Example binding to a Queue. Learn more at https://developers.cloudflare.com/queues/javascript-apis/
 	// MY_QUEUE: Queue;
+
+	AI: any
 }
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
+		const ai = new Ai(env.AI)
+
+		const response = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
+			prompt: "What is the origin of the phrase Hello, World",
+		})
+
+		return new Response(JSON.stringify(response))
 	},
-};
+}
