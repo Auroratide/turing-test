@@ -8,7 +8,9 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 import { Ai } from "@cloudflare/ai"
+import css from "./css.js"
 import html from "./site.js"
+import notFoundHtml from "./404.js"
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -29,20 +31,53 @@ export interface Env {
 	AI: any
 }
 
+function styles() {
+	return new Response(css, {
+		headers: {
+			'content-type': "text/css",
+		},
+	})
+}
+
+function notFound() {
+	return new Response(notFoundHtml, {
+		headers: {
+			'content-type': "text/html",
+		},
+		status: 404,
+	})
+}
+
+function website() {
+	return new Response(html, {
+		headers: {
+			'content-type': "text/html",
+		},
+	})
+}
+
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+	async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		const url = new URL(req.url)
+		console.log(url)
+
+		if (url.pathname === "/") {
+			return website()
+		}
+
+		if (url.pathname === "/styles.css") {
+			return styles()
+		}
 		// const ai = new Ai(env.AI)
 
 		// const response = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
 		// 	prompt: "What is the origin of the phrase Hello, World",
 		// })
 
+		// ai.run("",)
+
 		// return new Response(JSON.stringify(response))
 
-		return new Response(html, {
-			headers: {
-				'content-type': "text/html",
-			},
-		})
+		return notFound()
 	},
 }
