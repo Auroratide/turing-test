@@ -8,6 +8,7 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 import { Ai } from "@cloudflare/ai"
+import html from "./site.js"
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -30,12 +31,18 @@ export interface Env {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		const ai = new Ai(env.AI)
+		// const ai = new Ai(env.AI)
 
-		const response = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
-			prompt: "What is the origin of the phrase Hello, World",
+		// const response = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
+		// 	prompt: "What is the origin of the phrase Hello, World",
+		// })
+
+		// return new Response(JSON.stringify(response))
+
+		return new Response(html, {
+			headers: {
+				'content-type': "text/html",
+			},
 		})
-
-		return new Response(JSON.stringify(response))
 	},
 }
