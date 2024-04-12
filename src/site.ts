@@ -49,7 +49,7 @@ export default `
 						<button class="next-page">Let's get started.</button>
 					</section>
 				</article>
-				<article id="subject" class="column">
+				<article id="subject" class="column" style="--size: 2em;">
 					<section id="profile">
 						<h2>Subject Profile</h2>
 						<div class="row">
@@ -113,19 +113,34 @@ export default `
 								<button type="submit">Ask</button>
 							</div>
 							<div class="row">
-								<button type="button" class="full-width danger">End Interview</button>
+								<p class="flex text-center larger-text"><span id="questions-remaining">5</span> questions remaining</p>
+								<button id="end-interview" type="button" class="flex danger">End Interview</button>
 							</div>
 						</form>
-						<aside>
-							<p>Example questions to help start the interview:</p>
-							<div class="two-columns">
-								<button class="sample-question">What is your favorite color?</button>
-								<button class="sample-question">What is your favorite color?</button>
-								<button class="sample-question">What is your favorite color?</button>
-								<button class="sample-question">What is your favorite color?</button>
-							</div>
-						</aside>
 					</section>
+					<section id="verdict" hidden>
+						<h2>Make a decision</h2>
+						<div class="larger-text">
+							<p>Based on the interview, is the subject a <strong>robot</strong> or <strong class="secondary">human</strong>?</p>
+							<div class="row">
+								<button id="robot-verdict" class="flex">Robot</button>
+								<button id="human-verdict" class="flex secondary">Human</button>
+							</div>
+						</div>
+					</section>
+					<dialog id="verdict-result">
+						<div class="column">
+							<div class="stamp-container">
+								<picture>
+									<img src="https://auroratide.com/assets/art/esprie/cover.png" alt="Subject Portrait" />
+								</picture>
+								<p id="verdict-stamp" class="stamp robot">Robot</p>
+							</div>
+							<form method="dialog">
+								<button id="next-subject" autofocus>Next Subject</button>
+							</form>
+						</div>
+					</dialog>
 				</article>
 			</main>
 			<footer>

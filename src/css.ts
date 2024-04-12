@@ -25,6 +25,10 @@ body {
 	padding: 0;
 }
 
+footer {
+	padding-block: 3em 0;
+}
+
 *::selection {
 	background: var(--c-head);
 	color: var(--c-bg);
@@ -54,6 +58,7 @@ p:last-child { margin-block-end: 0; }
 
 picture {
 	display: block;
+	border: 0.5em solid currentColor;
 
 	img {
 		display: block;
@@ -101,13 +106,12 @@ hr {
 .column {
 	display: flex;
 	flex-direction: column;
-	gap: 1em;
+	gap: var(--size, 1em);
 }
 
 #profile picture {
 	aspect-ratio: 1 / 1;
 	max-width: 11em;
-	border: 0.5em solid currentColor;
 }
 
 dl.filled-fields {
@@ -219,6 +223,10 @@ form[inert] button, button:disabled {
 	text-transform: uppercase;
 }
 
+.secondary {
+	--c: var(--c-secondary);
+}
+
 .full-width { inline-size: 100%; }
 
 textarea {
@@ -240,5 +248,60 @@ textarea:focus {
 form[inert] textarea, textarea:disabled {
 	cursor: wait;
 	opacity: 0.5;
+}
+
+.text-center { text-align: center; }
+
+.larger-text { font-size: 1.25em; }
+
+[hidden] { display: none !important; }
+
+dialog {
+	position: fixed;
+	inset: 10%;
+	background: var(--c-bg);
+	border: 0.5em solid var(--c-head);
+	color: var(--c-primary);
+}
+
+dialog::backdrop {
+	background: var(--c-bg-muted);
+	opacity: 0.667;
+}
+
+.stamp-container {
+	position: relative;
+}
+
+.stamp {
+	font-size: 3em;
+	outline: 0.25em dotted var(--c);
+	outline-offset: -0.16em;
+	text-align: center;
+	margin: 0;
+	padding: 0.25em 2em;
+	background: var(--c);
+	color: var(--c-bg);
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%) rotate(-30deg);
+	animation: stampit 0.5s ease-in;
+}
+
+.stamp.robot { --c: var(--c-primary); }
+.stamp.human { --c: var(--c-secondary); }
+
+@keyframes stampit {
+	from {
+		transform: translate(-50%, -50%) rotate(-30deg) scale(2);
+		opacity: 0;
+	} to {
+		transform: translate(-50%, -50%) rotate(-30deg) scale(1);
+		opacity: 1;
+	}
 }
 `

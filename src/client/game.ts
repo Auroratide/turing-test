@@ -1,4 +1,6 @@
 export default `
+const MAX_QUESTIONS = 5
+
 let state = {
 	player: {
 		name: "981237",
@@ -53,8 +55,24 @@ const Profile = {
 }
 
 const Interview = {
+	section: () => document.querySelector('#player-actions'),
 	chatLog: () => document.querySelector('#chat-log'),
 	questionForm: () => document.querySelector('#question-form'),
+	questionsRemaining: () => document.querySelector('#questions-remaining'),
+	endInterview: () => document.querySelector('#end-interview'),
+}
+
+const Verdict = {
+	section: () => document.querySelector('#verdict'),
+	dialog: () => document.querySelector('#verdict-result'),
+	robot: () => document.querySelector('#robot-verdict'),
+	human: () => document.querySelector('#human-verdict'),
+	nextSubject: () => document.querySelector('#next-subject'),
+	stamp: () => document.querySelector('#verdict-stamp'),
+}
+
+function getQuestionsRemaining(messages) {
+	return MAX_QUESTIONS - messages.filter((it) => it.role === "user").length
 }
 
 function renderProfile(persona) {
@@ -86,11 +104,29 @@ function renderChatlog(messages, personaName) {
 	})
 
 	chatLog.scrollTop = chatLog.scrollHeight
+	renderQuestionsRemaining(messages)
+}
+
+function renderQuestionsRemaining(messages) {
+	Interview.questionsRemaining().textContent = MAX_QUESTIONS - messages.filter((it) => it.role === "user").length
 }
 
 function renderSubject(subject) {
 	renderProfile(subject.persona)
 	renderChatlog(subject.messages, subject.persona.name)
+}
+
+function endInterview() {
+	Interview.section().hidden = true
+	Interview.section().inert = true
+	Verdict.section().hidden = false
+}
+
+function renderVerdict(verdict) {
+	Verdict.dialog().showModal()
+	Verdict.stamp().textContent = verdict
+	Verdict.stamp().classList.remove("robot", "human")
+	Verdict.stamp().classList.add(verdict)
 }
 
 async function fetchChat(newMessage) {
@@ -110,11 +146,14 @@ async function fetchChat(newMessage) {
 async function submitQuestion(question) {
 	Interview.questionForm().inert = true
 	const chatLog = Interview.chatLog()
-	chatLog.appendChild(renderMessage({
-		role: "user",
-		content: question,
-	}, ""))
-	chatLog.scrollTop = chatLog.scrollHeight
+
+	await withState((state) => {
+		state.currentSubject.messages.push({
+			role: "user",
+			content: question,
+		})
+		renderChatlog(state.currentSubject.messages, state.currentSubject.persona.name)
+	})
 
 	await wait(1)
 	chatLog.appendChild(renderMessage({
@@ -125,19 +164,20 @@ async function submitQuestion(question) {
 
 	const res = await fetchChat(question)
 
+	Interview.questionForm().inert = false
+
 	await withState((state) => {
 		state.currentSubject.messages.push({
-			role: "user",
-			content: question,
-		}, {
 			role: "assistant",
 			content: res,
 		})
 
 		renderChatlog(state.currentSubject.messages, state.currentSubject.persona.name)
-	})
 
-	Interview.questionForm().inert = false
+		if (getQuestionsRemaining(state.currentSubject.messages) <= 0) {
+			endInterview()
+		}
+	})
 }
 
 function initialize() {
@@ -149,6 +189,10 @@ function initialize() {
 
 		submitQuestion(question)
 	})
+
+	Interview.endInterview().addEventListener('click', endInterview)
+	Verdict.robot().addEventListener("click", () => renderVerdict("robot"))
+	Verdict.human().addEventListener("click", () => renderVerdict("human"))
 
 	renderSubject(getState().currentSubject)
 }
