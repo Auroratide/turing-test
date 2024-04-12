@@ -16,6 +16,7 @@ let state = {
 			job: "Soldier",
 			notes: "None",
 			personality: "A bit reserved. Believes making every sentence a maximum of seven words makes her sound more like an AI.",
+			identity: "human",
 		},
 		messages: [ {
 			role: "assistant",
@@ -27,6 +28,7 @@ let state = {
 			role: "assistant",
 			content: "Can we talk about something else?",
 		} ],
+		previousSubjects: [],
 	},
 }
 
@@ -42,6 +44,30 @@ function getState() {
 
 async function wait(seconds) {
 	await new Promise((resolve) => setTimeout(resolve, seconds * 1000))
+}
+
+function transitionPage(from, to) {
+	from.hidden = true
+	to.hidden = false
+	const lines = Array.from(to.querySelectorAll("typewritten-text"))
+
+	for (let i = 0; i < lines.length - 1; i++) {
+		lines[i].addEventListener('typed', () => {
+			wait(0.4).then(() => lines[i + 1]?.type())
+		})
+	}
+
+	lines[0]?.type()
+}
+
+const Intro = {
+	card: () => document.querySelector('#intro-card'),
+	dialog: () => document.querySelector('#intro-card-dialog'),
+	p1: () => document.querySelector('#intro-card-01'),
+	p2: () => document.querySelector('#intro-card-02'),
+	p3: () => document.querySelector('#intro-card-03'),
+	p4: () => document.querySelector('#intro-card-04'),
+	nextButton: (page) => page.querySelector('.next-page'),
 }
 
 const Profile = {
@@ -180,6 +206,18 @@ async function submitQuestion(question) {
 	})
 }
 
+async function newSubject() {
+	await withState(async (state) => {
+		if (state.currentSubject) {
+			state.previousSubjects.push(state.currentSubject)
+		}
+
+		state.currentSubject = null
+
+		
+	})
+}
+
 function initialize() {
 	Interview.questionForm().addEventListener('submit', async (e) => {
 		e.preventDefault()
@@ -197,5 +235,14 @@ function initialize() {
 	renderSubject(getState().currentSubject)
 }
 
-initialize()
+function initializeIntroCard() {
+	Intro.nextButton(Intro.p1()).addEventListener('click', () => {
+		Intro.dialog().showModal()
+		transitionPage(Intro.p1(), Intro.p2())
+	})
+	Intro.nextButton(Intro.p2()).addEventListener('click', () => transitionPage(Intro.p2(), Intro.p3()))
+	Intro.nextButton(Intro.p3()).addEventListener('click', () => transitionPage(Intro.p3(), Intro.p4()))
+}
+
+initializeIntroCard()
 `

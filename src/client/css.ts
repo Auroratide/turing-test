@@ -109,7 +109,7 @@ hr {
 	gap: var(--size, 1em);
 }
 
-#profile picture {
+.profile-picture {
 	aspect-ratio: 1 / 1;
 	max-width: 11em;
 }
@@ -254,7 +254,7 @@ form[inert] textarea, textarea:disabled {
 
 .larger-text { font-size: 1.25em; }
 
-[hidden] { display: none !important; }
+article[hidden], section[hidden] { display: none !important; }
 
 dialog {
 	position: fixed;
@@ -262,6 +262,7 @@ dialog {
 	background: var(--c-bg);
 	border: 0.5em solid var(--c-head);
 	color: var(--c-primary);
+	max-width: min(50em, 95dvw);
 }
 
 dialog::backdrop {

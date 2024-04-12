@@ -26,30 +26,46 @@ export default `
 				<p>A game about identifying humans and robots.</p>
 			</header>
 			<main>
-				<article id="intro-card" hidden>
+				<article id="intro-card">
 					<section id="intro-card-01">
-						<h2>Turing Test</h2>
-						<p>A game about identifying humans and robots.</p>
+						<h2>Can you distinguish humans from robots?</h2>
+						<p>It's the year 2084. 10 years have passed since the start of the AI War.</p>
+						<p><strong class="secondary">Humans</strong> have been forced to disguise themselves as robots to survive.</p>
+						<p><strong>Robots</strong> have adapted to act more like humans to avoid detection.</p>
+						<p>It is up to you to tell the difference. Are you up to the task?</p>
 						<button class="next-page">Start Game</button>
 					</section>
-					<section id="intro-card-02" hidden>
-						<h2>Welcome.</h2>
-						<p><typewritten-text type-speed="30" paused>Hello Employee {EMPLOYEE_NUM}. Welcome to your first day as a <code>HUMAN/ROBOT IDENTIFICATION SPECIALIST</code>. As you may know, this job was invented to prevent civilian deaths during the AI War. For the safety of us all, it is imperitive that you use your inferential skills to identify any robots in our most ambiguous cases.</typewritten-text></p>
-						<button class="next-page">How does my job work?</button>
-					</section>
-					<section id="intro-card-03" hidden>
-						<h2>Being an indentification specialist.</h2>
-						<p><typewritten-text type-speed="30" paused>You will interview subjects one at a time about any matter you deem appropriate.</typewritten-text></p>
-						<p><typewritten-text type-speed="30" paused>Since you have just started, we will cross-examine some of your submissions blah blah</typewritten-text></p>
-						<button class="next-page">How do I know if the subject is a robot?</button>
-					</section>
-					<section id="intro-card-04" hidden>
-						<h2>Identifying robots and humans.</h2>
-						<p><typewritten-text type-speed="30" paused>That's precisely why we hired you, Employee {EMPLOYEE_NUM}. Use your intuition and experience to make the right judgement.</typewritten-text></p>
-						<button class="next-page">Let's get started.</button>
-					</section>
+					<dialog id="intro-card-dialog">
+						<div class="row">
+							<div>
+								<picture class="profile-picture">
+									<img src="https://auroratide.com/assets/art/esprie/cover.png" alt="Subject Portrait" />
+								</picture>
+							</div>
+							<div class="flex">
+								<section id="intro-card-02">
+									<h2>Welcome.</h2>
+									<p><typewritten-text type-speed="30" paused>Hello Officer {EMPLOYEE_NUM}. Welcome to your first day as a <code>DISCERNMENT OFFICER</code>. As you may know, this job was invented to prevent civilian deaths during the AI War. For the safety of us all, it is imperitive that you use your inferential skills to identify any robots in our most ambiguous cases.</typewritten-text></p>
+									<button class="next-page">How does my job work?</button>
+								</section>
+								<section id="intro-card-03" hidden>
+									<h2>Being an indentification specialist.</h2>
+									<p><typewritten-text type-speed="30" paused>You will interview subjects one at a time about any matters you deem appropriate.</typewritten-text></p>
+									<p><typewritten-text type-speed="30" paused>Ask them questions about their background, their hobbies, their beliefs. Pick apart their testimony to find any tell-tale signs of them being a human or robot.</typewritten-text></p>
+									<p><typewritten-text type-speed="30" paused>You can even ask them to draw if it helps.</typewritten-text></p>
+									<button class="next-page">How do I know if the subject is a robot?</button>
+								</section>
+								<section id="intro-card-04" hidden>
+									<h2>Identifying robots and humans.</h2>
+									<p><typewritten-text type-speed="30" paused>That's precisely why we hired you. Use your intuition and experience to make the right judgement.</typewritten-text></p>
+									<p><typewritten-text type-speed="30" paused>After <code>three</code> subjects, we will cross-examine your findings and provide feedback. Good luck, Officer {EMPLOYEE_NUM}.</typewritten-text></p>
+									<button class="next-page">Let's get started.</button>
+								</section>
+							</div>
+						</div>
+					</dialog>
 				</article>
-				<article id="subject" class="column" style="--size: 2em;">
+				<article id="subject" class="column" style="--size: 2em;" hidden>
 					<section id="profile">
 						<h2>Subject Profile</h2>
 						<div class="row">
@@ -83,7 +99,7 @@ export default `
 									<dd id="profile-notes">Arbitrary notes</dd>
 								</div>
 							</dl>
-							<picture>
+							<picture class="profile-picture">
 								<img src="https://auroratide.com/assets/art/esprie/cover.png" alt="Subject Portrait" />
 							</picture>
 						</div>
@@ -149,29 +165,6 @@ export default `
 		</div>
 
 		<script src="/game.js"></script>
-
-		<script>
-			function transition(from, to) {
-				from.toggleAttribute('hidden', true)
-				to.removeAttribute('hidden')
-				to.querySelector('typewritten-text')?.type()
-			}
-
-			const Intro = {
-				card: () => document.querySelector('#intro-card'),
-				p1: () => document.querySelector('#intro-card-01'),
-				p2: () => document.querySelector('#intro-card-02'),
-				p3: () => document.querySelector('#intro-card-03'),
-				p4: () => document.querySelector('#intro-card-04'),
-				nextButton: (page) => page.querySelector('.next-page'),
-			}
-
-			// Intro.card().removeAttribute('hidden')
-			Intro.nextButton(Intro.p1()).addEventListener('click', () => transition(Intro.p1(), Intro.p2()))
-			Intro.nextButton(Intro.p2()).addEventListener('click', () => transition(Intro.p2(), Intro.p3()))
-			Intro.nextButton(Intro.p3()).addEventListener('click', () => transition(Intro.p3(), Intro.p4()))
-		</script>
 	</body>
 </html>
-
 `
