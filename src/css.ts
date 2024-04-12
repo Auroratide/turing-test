@@ -106,7 +106,7 @@ hr {
 
 #profile picture {
 	aspect-ratio: 1 / 1;
-	max-width: 12.5em;
+	max-width: 11em;
 	border: 0.5em solid currentColor;
 }
 

@@ -73,7 +73,7 @@ export default `
 									<dd><time>2084-06-14</time></dd>
 								</div>
 								<div>
-									<dt>Occupation</dt>
+									<dt>Job</dt>
 									<dd>Soldier</dd>
 								</div>
 								<div class="span">
