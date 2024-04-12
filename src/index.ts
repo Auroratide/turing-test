@@ -56,18 +56,49 @@ function website() {
 	})
 }
 
+type ChatRequest = {
+	persona: string
+	historicalMessages: string[],
+	newMessage: string,
+}
+type ChatResponse = {
+	response: string,
+}
+function chat(body: ChatRequest) {
+	console.log(body)
+	const res: ChatResponse = {
+		response: "Hello, World!",
+	}
+	return new Response(JSON.stringify(res), {
+		headers: {
+			'content-type': "application/json",
+		},
+	})
+}
+
 export default {
 	async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(req.url)
 		console.log(url)
 
-		if (url.pathname === "/") {
-			return website()
+		if (req.method === "GET") {
+			if (url.pathname === "/") {
+				return website()
+			}
+
+			if (url.pathname === "/styles.css") {
+				return styles()
+			}
 		}
 
-		if (url.pathname === "/styles.css") {
-			return styles()
+		if (req.method === "POST") {
+			const body = await req.json()
+
+			if (url.pathname === "/chat") {
+				return chat(body as ChatRequest)
+			}
 		}
+
 		// const ai = new Ai(env.AI)
 
 		// const response = await ai.run("@cf/meta/llama-2-7b-chat-int8", {
