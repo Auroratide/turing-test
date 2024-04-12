@@ -11,6 +11,8 @@ import { Ai } from "@cloudflare/ai"
 import css from "./css.js"
 import html from "./site.js"
 import notFoundHtml from "./404.js"
+import game from "./client/game.js"
+import type { Persona } from "./persona.js"
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -39,6 +41,14 @@ function styles() {
 	})
 }
 
+function gameScript() {
+	return new Response(game, {
+		headers: {
+			'content-type': "application/javascript",
+		},
+	})
+}
+
 function notFound() {
 	return new Response(notFoundHtml, {
 		headers: {
@@ -57,15 +67,19 @@ function website() {
 }
 
 type ChatRequest = {
-	persona: string
-	historicalMessages: string[],
+	persona: Persona,
+	previousMessages: {
+		role: "assistant" | "user",
+		content: string,
+	}[],
 	newMessage: string,
 }
 type ChatResponse = {
 	response: string,
 }
-function chat(body: ChatRequest) {
-	console.log(body)
+async function chat(body: ChatRequest) {
+	await new Promise((resolve) => setTimeout(resolve, 3000))
+
 	const res: ChatResponse = {
 		response: "Hello, World!",
 	}
@@ -88,6 +102,10 @@ export default {
 
 			if (url.pathname === "/styles.css") {
 				return styles()
+			}
+
+			if (url.pathname === "/game.js") {
+				return gameScript()
 			}
 
 			if (url.pathname === "/sandbox") {
@@ -115,7 +133,7 @@ export default {
 			const body = await req.json()
 
 			if (url.pathname === "/chat") {
-				return chat(body as ChatRequest)
+				return await chat(body as ChatRequest)
 			}
 		}
 

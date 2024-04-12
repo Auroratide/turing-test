@@ -154,8 +154,8 @@ dl.filled-fields {
 		p:first-child { margin: 0; }
 	}
 
-	.them { --c: var(--c-primary); }
-	.you { --c: var(--c-secondary); }
+	.assistant { --c: var(--c-primary); }
+	.user { --c: var(--c-secondary); }
 }
 
 .hgroup {

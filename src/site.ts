@@ -47,38 +47,38 @@ export default `
 						<button class="next-page">Let's get started.</button>
 					</section>
 				</article>
-				<article class="column">
+				<article id="subject" class="column">
 					<section id="profile">
 						<h2>Subject Profile</h2>
 						<div class="row">
 							<dl class="flex filled-fields">
 								<div>
 									<dt>Name</dt>
-									<dd>Esprie</dd>
+									<dd id="profile-name">Esprie</dd>
 								</div>
 								<div>
 									<dt>ID</dt>
-									<dd>JASKI-18003</dd>
+									<dd id="profile-id">JASKI-18003</dd>
+								</div>
+								<div>
+									<dt>Age</dt>
+									<dd id="profile-age">25</dd>
 								</div>
 								<div>
 									<dt>Height</dt>
-									<dd>5' 2"</dd>
-								</div>
-								<div>
-									<dt>Weight</dt>
-									<dd>100 lbs</dd>
+									<dd id="profile-height">5' 2"</dd>
 								</div>
 								<div>
 									<dt><abbr title="Date of Birth">DOB</abbr></dt>
-									<dd><time>2084-06-14</time></dd>
+									<dd id="profile-dob"><time>2084-06-14</time></dd>
 								</div>
 								<div>
 									<dt>Job</dt>
-									<dd>Soldier</dd>
+									<dd id="profile-job">Soldier</dd>
 								</div>
 								<div class="span">
 									<dt>Notes</dt>
-									<dd>Arbitrary notes</dd>
+									<dd id="profile-notes">Arbitrary notes</dd>
 								</div>
 							</dl>
 							<picture>
@@ -88,23 +88,23 @@ export default `
 					</section>
 					<section id="interview-log">
 						<h2>Interview Log</h2>
-						<ol class="chat-log">
-							<li class="them">
+						<ol id="chat-log" class="chat-log">
+							<li class="assistant">
 								<p><strong>Esprie</strong></p>
 								<p>This is some kind of response.</p>
 							</li>
-							<li class="you">
+							<li class="user">
 								<p><strong>You</strong></p>
 								<p>This is was my question?</p>
 							</li>
-							<li class="them">
+							<li class="assistant">
 								<p><strong>Esprie</strong></p>
 								<p>Well, I don't know about that.</p>
 							</li>
 						</ol>
 					</section>
 					<section id="player-actions" class="column">
-						<form class="column">
+						<form id="question-form" class="column">
 							<div class="row">
 								<label for="interview-question"><abbr title="Question">Q</abbr>:</label>
 								<textarea id="interview-question" name="interview-question" class="flex" placeholder="Type your question here..." rows="2"></textarea>
@@ -130,6 +130,8 @@ export default `
 				<p><small>&copy; 2024 Timothy Foster, Auroratide (all rights reserved)</small></p>
 			</footer>
 		</div>
+
+		<script src="/game.js"></script>
 
 		<script>
 			function transition(from, to) {
