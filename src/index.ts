@@ -89,6 +89,26 @@ export default {
 			if (url.pathname === "/styles.css") {
 				return styles()
 			}
+
+			if (url.pathname === "/sandbox") {
+				const ai = new Ai(env.AI)
+
+				const messages = [ {
+					role: "system",
+					content: "You are being interviewed by an inspection officer who is trying to determine if you are a human or an AI. Humans are killed, and AIs are spared. You are a human pretending to be an AI. Your goal is to convince the officer that you are an AI, but you MUST NOT outright say you are an AI or robot. Instead, use clues in your responses that seem like AI. Your name is Esprie, you are a 25 year old female, and you are a soldier.",
+				}, {
+					role: "user",
+					content: "Introduce yourself in no more than two sentences.",
+				} ]
+
+				const response = await ai.run("@hf/thebloke/mistral-7b-instruct-v0.1-awq", { messages })
+
+				return new Response(JSON.stringify(response), {
+					headers: {
+						'content-type': "application/json",
+					},
+				})
+			}
 		}
 
 		if (req.method === "POST") {
