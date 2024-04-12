@@ -12,6 +12,7 @@ import css from "./css.js"
 import html from "./site.js"
 import notFoundHtml from "./404.js"
 import game from "./client/game.js"
+import customElements from "./client/custom-elements.js"
 import type { Persona } from "./persona.js"
 
 export interface Env {
@@ -43,6 +44,14 @@ function styles() {
 
 function gameScript() {
 	return new Response(game, {
+		headers: {
+			'content-type': "application/javascript",
+		},
+	})
+}
+
+function customElementsScript() {
+	return new Response(customElements, {
 		headers: {
 			'content-type': "application/javascript",
 		},
@@ -106,6 +115,10 @@ export default {
 
 			if (url.pathname === "/game.js") {
 				return gameScript()
+			}
+
+			if (url.pathname === "/custom-elements.js") {
+				return customElementsScript()
 			}
 
 			if (url.pathname === "/sandbox") {

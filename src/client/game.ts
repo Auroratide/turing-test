@@ -38,6 +38,10 @@ function getState() {
 	return structuredClone(state)
 }
 
+async function wait(seconds) {
+	await new Promise((resolve) => setTimeout(resolve, seconds * 1000))
+}
+
 const Profile = {
 	name: () => document.querySelector('#profile-name'),
 	id: () => document.querySelector('#profile-id'),
@@ -80,6 +84,8 @@ function renderChatlog(messages, personaName) {
 	messages.forEach((message) => {
 		chatLog.appendChild(renderMessage(message, personaName))
 	})
+
+	chatLog.scrollTop = chatLog.scrollHeight
 }
 
 function renderSubject(subject) {
@@ -102,11 +108,20 @@ async function fetchChat(newMessage) {
 }
 
 async function submitQuestion(question) {
+	Interview.questionForm().inert = true
 	const chatLog = Interview.chatLog()
 	chatLog.appendChild(renderMessage({
 		role: "user",
 		content: question,
 	}, ""))
+	chatLog.scrollTop = chatLog.scrollHeight
+
+	await wait(1)
+	chatLog.appendChild(renderMessage({
+		role: "assistant",
+		content: "<typing-text>typing</typing-text>",
+	}, getState().currentSubject.persona.name))
+	chatLog.scrollTop = chatLog.scrollHeight
 
 	const res = await fetchChat(question)
 
@@ -121,6 +136,8 @@ async function submitQuestion(question) {
 
 		renderChatlog(state.currentSubject.messages, state.currentSubject.persona.name)
 	})
+
+	Interview.questionForm().inert = false
 }
 
 function initialize() {

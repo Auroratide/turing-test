@@ -145,6 +145,9 @@ dl.filled-fields {
 	display: flex;
 	flex-direction: column;
 	gap: 1.5em;
+	block-size: 20em;
+	overflow: auto;
+	scroll-behavior: smooth;
 
 	li {
 		color: var(--c);
@@ -206,6 +209,11 @@ button:hover, button:focus {
 	--c: var(--c-head);
 }
 
+form[inert] button, button:disabled {
+	cursor: wait;
+	opacity: 0.5;
+}
+
 .danger {
 	--c: var(--c-danger);
 	text-transform: uppercase;
@@ -227,5 +235,10 @@ textarea {
 textarea:focus {
 	border-color: var(--c-head);
 	outline: none;
+}
+
+form[inert] textarea, textarea:disabled {
+	cursor: wait;
+	opacity: 0.5;
 }
 `

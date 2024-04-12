@@ -16,6 +16,8 @@ export default `
 
 		<link rel="stylesheet" href="https://unpkg.com/@auroratide/typewritten-text/lib/style.css" />
 		<script type="module" src="https://unpkg.com/@auroratide/typewritten-text/lib/define.js"></script>
+
+		<script type="module" src="/custom-elements.js"></script>
 	</head>
 	<body>
 		<div class="container">
