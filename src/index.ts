@@ -14,7 +14,7 @@ import notFoundHtml from "./client/404.js"
 import game from "./client/game.js"
 import customElements from "./client/custom-elements.js"
 import type { Persona } from "./domain/persona.js"
-import { generatePersona } from "./ai.js"
+import { generatePersona, generateProfilePic, respondToQuestion } from "./ai.js"
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -87,17 +87,30 @@ type ChatRequest = {
 type ChatResponse = {
 	response: string,
 }
-async function chat(body: ChatRequest) {
-	await new Promise((resolve) => setTimeout(resolve, 3000))
+async function chat(body: ChatRequest, env: Env) {
+	const ai = new Ai(env.AI)
+	const answer = await respondToQuestion(ai, body.newMessage, body.persona, body.previousMessages)
 
 	const res: ChatResponse = {
-		response: "Hello, World!",
+		response: answer,
 	}
+
 	return new Response(JSON.stringify(res), {
 		headers: {
 			'content-type': "application/json",
 		},
 	})
+
+	// await new Promise((resolve) => setTimeout(resolve, 3000))
+
+	// const res: ChatResponse = {
+	// 	response: "Hello, World!",
+	// }
+	// return new Response(JSON.stringify(res), {
+	// 	headers: {
+	// 		'content-type': "application/json",
+	// 	},
+	// })
 }
 
 type ProfileRequest = {
@@ -105,7 +118,6 @@ type ProfileRequest = {
 }
 type ProfileResponse = {
 	persona: Persona,
-	image: string,
 }
 async function createProfile(body: ProfileRequest, env: Env) {
 	const identity = body.targetIdentity ?? (Math.random() < 0.5 ? "human" : "robot")
@@ -115,12 +127,26 @@ async function createProfile(body: ProfileRequest, env: Env) {
 
 	const res: ProfileResponse = {
 		persona: persona,
-		image: "",
 	}
 
 	return new Response(JSON.stringify(res), {
 		headers: {
 			'content-type': "application/json",
+		},
+	})
+}
+
+type ProfileImageRequest = {
+	persona: Persona,
+}
+async function createProfileImage(body: ProfileImageRequest, env: Env) {
+	const ai = new Ai(env.AI)
+
+	const image = await generateProfilePic(ai, body.persona)
+
+	return new Response(image, {
+		headers: {
+			'content-type': "image/png",
 		},
 	})
 }
@@ -168,36 +194,18 @@ export default {
 				// })
 
 				// image poc
-				// const ai = new Ai(env.AI)
-
-				// const inputs = {
-				// 	prompt: "profile image of a 25-year-old woman with pink hair",
-				// }
-
-				// const response = await ai.run("@cf/bytedance/stable-diffusion-xl-lightning", inputs)
-
-				// return new Response(response, {
-				// 	headers: {
-				// 		'content-type': "image/png",
-				// 	},
-				// })
-
-				// profile poc
 				const ai = new Ai(env.AI)
 
-				const messages = [ {
-					role: "system",
-					content: "Format your response as ONLY JSON. The keys of the object MUST be 'name', 'age', 'job', 'height', 'sex', 'job', and 'notes'.",
-				}, {
-					role: "user",
-					content: "Generate a random persona. The age must be between 18 and 65. The notes must be a single sentence no longer than 10 words. The name must be first-name only.",
-				} ]
+				const inputs = {
+					// prompt: "anime-styled profile image of a 31-year-old male solar panel installer",
+					prompt: "anime-styled profile image of a 44-year-old female who is a Occupational Therapist",
+				}
 
-				const response = await ai.run("@hf/thebloke/mistral-7b-instruct-v0.1-awq", { messages })
+				const response = await ai.run("@cf/bytedance/stable-diffusion-xl-lightning", inputs)
 
-				return new Response(JSON.stringify(response), {
+				return new Response(response, {
 					headers: {
-						'content-type': "application/json",
+						'content-type': "image/png",
 					},
 				})
 			}
@@ -207,11 +215,15 @@ export default {
 			const body = await req.json()
 
 			if (url.pathname === "/chat") {
-				return await chat(body as ChatRequest)
+				return await chat(body as ChatRequest, env)
 			}
 
 			if (url.pathname === "/profiles") {
 				return await createProfile(body as ProfileRequest, env)
+			}
+
+			if (url.pathname === "/profiles/images") {
+				return await createProfileImage(body as ProfileImageRequest, env)
 			}
 		}
 

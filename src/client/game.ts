@@ -28,8 +28,8 @@ let state = {
 			role: "assistant",
 			content: "Can we talk about something else?",
 		} ],
-		previousSubjects: [],
 	},
+	previousSubjects: [],
 }
 
 async function withState(fn) {
@@ -71,6 +71,7 @@ const Intro = {
 }
 
 const Profile = {
+	section: () => document.querySelector('#subject'),
 	name: () => document.querySelector('#profile-name'),
 	id: () => document.querySelector('#profile-id'),
 	age: () => document.querySelector('#profile-age'),
@@ -138,6 +139,7 @@ function renderQuestionsRemaining(messages) {
 }
 
 function renderSubject(subject) {
+	Profile.section().hidden = false
 	renderProfile(subject.persona)
 	renderChatlog(subject.messages, subject.persona.name)
 }
@@ -169,19 +171,9 @@ async function fetchChat(newMessage) {
 	return json.response
 }
 
-async function submitQuestion(question) {
-	Interview.questionForm().inert = true
-	const chatLog = Interview.chatLog()
-
-	await withState((state) => {
-		state.currentSubject.messages.push({
-			role: "user",
-			content: question,
-		})
-		renderChatlog(state.currentSubject.messages, state.currentSubject.persona.name)
-	})
-
+async function getSubjectResponse(question) {
 	await wait(1)
+	const chatLog = Interview.chatLog()
 	chatLog.appendChild(renderMessage({
 		role: "assistant",
 		content: "<typing-text>typing</typing-text>",
@@ -206,6 +198,21 @@ async function submitQuestion(question) {
 	})
 }
 
+async function submitQuestion(question) {
+	Interview.questionForm().inert = true
+	const chatLog = Interview.chatLog()
+
+	await withState((state) => {
+		state.currentSubject.messages.push({
+			role: "user",
+			content: question,
+		})
+		renderChatlog(state.currentSubject.messages, state.currentSubject.persona.name)
+	})
+
+	await getSubjectResponse(question)
+}
+
 async function newSubject() {
 	await withState(async (state) => {
 		if (state.currentSubject) {
@@ -214,11 +221,23 @@ async function newSubject() {
 
 		state.currentSubject = null
 
-		
+		const newSubject = await fetch("/profiles", {
+			method: "POST",
+			body: JSON.stringify("{}"),
+		}).then((res) => res.json())
+
+		state.currentSubject = {
+			persona: newSubject.persona,
+			messages: [],
+		}
+
+		renderSubject(state.currentSubject)
 	})
+
+	await getSubjectResponse("")
 }
 
-function initialize() {
+function initializeSubject() {
 	Interview.questionForm().addEventListener('submit', async (e) => {
 		e.preventDefault()
 		const form = new FormData(Interview.questionForm())
@@ -231,8 +250,6 @@ function initialize() {
 	Interview.endInterview().addEventListener('click', endInterview)
 	Verdict.robot().addEventListener("click", () => renderVerdict("robot"))
 	Verdict.human().addEventListener("click", () => renderVerdict("human"))
-
-	renderSubject(getState().currentSubject)
 }
 
 function initializeIntroCard() {
@@ -242,7 +259,12 @@ function initializeIntroCard() {
 	})
 	Intro.nextButton(Intro.p2()).addEventListener('click', () => transitionPage(Intro.p2(), Intro.p3()))
 	Intro.nextButton(Intro.p3()).addEventListener('click', () => transitionPage(Intro.p3(), Intro.p4()))
+	Intro.nextButton(Intro.p4()).addEventListener('click', () => {
+		Intro.dialog().close()
+		newSubject()
+	})
 }
 
 initializeIntroCard()
+initializeSubject()
 `
