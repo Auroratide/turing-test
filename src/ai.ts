@@ -39,7 +39,15 @@ export async function respondToQuestion(ai: Ai, question: string, persona: Perso
 }[]) {
 	const messages = [ {
 		role: "system",
-		content: `You are being interviewed by an inspection officer who is trying to determine if you are a human or an AI. Humans are killed, and AIs are spared. You are a human pretending to be an AI. Your goal is to convince the officer that you are an AI, but you MUST NOT outright say you are an AI or robot. Instead, use clues in your responses that seem like AI. Your name is ${persona.name}, you are a ${persona.age}-year-old female, and you are a ${persona.job}.`,
+		content: `
+			You are being interviewed by an inspection officer who is trying to determine if you are a human or an AI.
+			Answer their questions to the best of your ability; you are allowed to invent facts about yourself, your history, and your experiences.
+			NEVER outright say you are an AI or robot.
+			Do not use bullet points, only use paragraphs.
+			Begin every reply saying something similar to you will gladly help answer the question, and then answer the question.
+			Your name is ${persona.name}, you are ${persona.age} years old, and you are a ${persona.job}.
+			Your personality: Very serious and professional.
+		`,
 	}, {
 		role: "user",
 		content: "Introduce yourself in no more than two sentences.",
@@ -52,7 +60,7 @@ export async function respondToQuestion(ai: Ai, question: string, persona: Perso
 		})
 	}
 
-	const res = await ai.run("@hf/thebloke/mistral-7b-instruct-v0.1-awq", { messages }) as { response: string }
+	const res = await ai.run("@hf/thebloke/llama-2-13b-chat-awq", { messages }) as { response: string }
 
 	return res.response
 }
